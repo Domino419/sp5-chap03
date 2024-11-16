@@ -10,4 +10,21 @@ public class Member {
     private String name  ;
     private LocalDateTime registerDateTime ;
 
+    public Member(String email, String password, String name, LocalDateTime regDateTime ) {
+        this.email = email;
+        this.password  = password;
+        this.name = name ;
+        this.registerDateTime = regDateTime  ;
+    }
+
+    void setId (Long id  ) {
+        this.id = id ;
+    }
+
+    public Long getId() {
+        return id ;
+    }
+
+
+
 }
