@@ -25,6 +25,33 @@ public class Member {
         return id ;
     }
 
+    public String getEmail() {
+        return email ;
+    }
 
+
+    public String getPassword() {
+        return password ;
+    }
+
+    public String getName() {
+        return name ;
+    }
+
+    public LocalDateTime getRegisterDateTime() {
+        return registerDateTime ;
+    }
+
+    /**
+     * methodName    : changePassword
+     * date          : 24-11-17 12:02
+     * param         : String oldPassword , String newPassword
+     * description   : 암호 변경 기능 구현
+     */
+    public void changePassword(String oldPassword , String newPassword) {
+        if ( ! password.equals(oldPassword))
+            throw new WrongIdPasswordException();
+        this.password = newPassword ;
+    }
 
 }
