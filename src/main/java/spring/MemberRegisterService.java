@@ -11,7 +11,7 @@ public class MemberRegisterService {
     }
 
     /**
-     * class         : regist
+     * method        : regist
      * date          : 24-11-17 12:30
      * param         :
      * return        : Long Id

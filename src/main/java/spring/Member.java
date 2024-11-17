@@ -46,7 +46,7 @@ public class Member {
      * methodName    : changePassword
      * date          : 24-11-17 12:02
      * param         : String oldPassword , String newPassword
-     * description   : 암호 변경 기능 구현
+     * description   : oldPassword가 저장된 password와 같은 경우에 암호 변경 처리
      */
     public void changePassword(String oldPassword , String newPassword) {
         if ( ! password.equals(oldPassword))
