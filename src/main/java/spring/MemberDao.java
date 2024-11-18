@@ -3,8 +3,6 @@ package spring;
 import java.util.HashMap ;
 import java.util.Map ;
 
-
-
 public class MemberDao {
 
     private static long nextId = 0 ;
