@@ -1,21 +1,34 @@
 package main;
 
 import assembler.Assembler;
-import spring.*;
+import main.config.AppCtx;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import spring.RegisterRequest;
+import spring.MemberRegisterService;
+import spring.ChangePasswordService;
+import spring.DuplicateMemberException;
+import spring.MemberNotFoundException;
+import spring.WrongIdPasswordException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 /**
- * class         : MainForAssembler
+ * class         : MainForSpring
  * date          : 24-11-17 22:48
  * description   : 콘솔 명령어를 통해 회원 등록과 비밀번호 변경 기능을 수행하는 class
  */
 
-public class MainForAssembler {
+public class MainForSpring {
+
+    private static ApplicationContext ctx = null ;  // 추가
 
     public static void main(String[] args) throws IOException {
+        //AnnotationConfigApplicationContext을 사용해서 설정파일(AppCtx.class)로부터 생성할 객체와 의존 주입 대상을 정한다.
+        ctx = new AnnotationConfigApplicationContext(AppCtx.class) ; // 추가
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)) ;
 
         while (true){
@@ -57,7 +70,10 @@ public class MainForAssembler {
             return;
         }
 
-        MemberRegisterService regSvc = assembler.getMemberRegisterService();
+        // 스프링 컨테이너로부터 이름이 "MemberRegSvc" 인 빈 객체를 구한다.
+        MemberRegisterService regSvc = ctx.getBean("MemberRegSvc" , MemberRegisterService.class) ; //추가
+       // MemberRegisterService regSvc = assembler.getMemberRegisterService();
+
         RegisterRequest req = new RegisterRequest() ;
         req.setEmail(arg[1]);
         req.setName(arg[2]);
@@ -87,7 +103,11 @@ public class MainForAssembler {
             printHelp() ;
             return;
         }
-        ChangePasswordService changePwdSvc = assembler.getChangePasswordService();
+
+        // 스프링 컨테이너로부터 이름이 "changePwdSvc"  인 빈 객체를 구한다.
+        ChangePasswordService changePwdSvc = ctx.getBean("changePwdSvc" ,ChangePasswordService.class ) ; //추가
+        // ChangePasswordService changePwdSvc = assembler.getChangePasswordService();
+
         try {
             changePwdSvc.changePassword(arg[1], arg[2], arg[3]);  //changePassword(String email, String oldPwd, String newPwd)
             System.out.println("암호를 변경하였습니다.");
@@ -107,7 +127,7 @@ public class MainForAssembler {
      * description   : 잘못된 명령어 입력 시 사용법을 안내하는 메시지를 출력
      */
     private static void printHelp(){
-        System.out.println();
+        System.out.println("MainForSpring --");
         System.out.println("잘못된 명령입니다. 아래 명령어 사용법을 확인하세요.");
         System.out.println("명령어 사용법 : ");
         System.out.println("new 이메일 이름 암호 암호확인");
@@ -117,10 +137,4 @@ public class MainForAssembler {
 
 
 }
-/*
-assembler는 자신이 생성하고 조립한 객체를 리턴하는 메서드를 제공한다.
-MemberRegisterService regSvc = assembler.getMemberRegisterService();
-ChangePasswordService changePwdSvc = assembler.getChangePasswordService();
-이와 같이 assembler에서 제공하는 메서드를 이용해서 필요한 객체를 구하고, 그 객체를 사용하는 것이 전형적인 assembler 사용법
 
-*/
