@@ -2,6 +2,11 @@ package spring;
 
 import java.time.LocalDateTime;
 
+/**
+ * class         : MemberRegisterService
+ * date          : 24-11-17
+ * description   : 회원 등록 서비스
+ */
 public class MemberRegisterService {
 
     private MemberDao memberDao;
@@ -28,6 +33,5 @@ public class MemberRegisterService {
         memberDao.insert(newMember);
         return newMember.getId();
     }
-
 
 }
