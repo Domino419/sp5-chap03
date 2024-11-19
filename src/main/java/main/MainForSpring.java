@@ -4,12 +4,8 @@ import assembler.Assembler;
 import main.config.AppCtx;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import spring.RegisterRequest;
-import spring.MemberRegisterService;
-import spring.ChangePasswordService;
-import spring.DuplicateMemberException;
-import spring.MemberNotFoundException;
-import spring.WrongIdPasswordException;
+
+import spring.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,22 +27,33 @@ public class MainForSpring {
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)) ;
 
-        while (true){
+        while (true) {
             System.out.println("명령어를 입력하세요 :  ");
-            String command = reader.readLine() ;
+            String command = reader.readLine();
 
             if (command.equalsIgnoreCase("exit")) {
                 System.out.println("종료합니다.");
                 break;
             }
-            if(command.startsWith("new ")){
+            if (command.startsWith("new ")) {
                 processNewCommand(command.split(" "));
                 continue;
             } else if (command.startsWith("change ")) {
                 processChangeCommand(command.split(" "));
                 continue;
             }
-        printHelp() ;
+            // 2024.11.19 cahp03 스프링 DI - 리스트3.19 소스 추가
+            else if (command.startsWith("list")) {
+                processListCommand();
+                continue;
+            }
+            // 2024.11.19 cahp03 스프링 DI - 리스트3.22 소스 추가
+            else if (command.startsWith("info ")) {
+                processInfoCommand(command.split(" "));
+                continue;
+            }
+
+            printHelp();
         }
     }
     /**
@@ -71,7 +78,7 @@ public class MainForSpring {
         }
 
         // 스프링 컨테이너로부터 이름이 "MemberRegSvc" 인 빈 객체를 구한다.
-        MemberRegisterService regSvc = ctx.getBean("MemberRegSvc" , MemberRegisterService.class) ; //추가
+        MemberRegisterService regSvc = ctx.getBean("memberRegSvc" , MemberRegisterService.class) ; //추가
        // MemberRegisterService regSvc = assembler.getMemberRegisterService();
 
         RegisterRequest req = new RegisterRequest() ;
@@ -127,14 +134,47 @@ public class MainForSpring {
      * description   : 잘못된 명령어 입력 시 사용법을 안내하는 메시지를 출력
      */
     private static void printHelp(){
-        System.out.println("MainForSpring --");
+        System.out.println("----------------");
         System.out.println("잘못된 명령입니다. 아래 명령어 사용법을 확인하세요.");
         System.out.println("명령어 사용법 : ");
         System.out.println("new 이메일 이름 암호 암호확인");
         System.out.println("change 이메일 현재비번 변경비번");
+        System.out.println("info 이메일 ");   // 안내말 추가
+        System.out.println("----------------");
         System.out.println();
     }
 
+    /**
+     * method        : processListCommand
+     * date          : 24-11-17
+     * description   : Spring 컨텍스트에서 "listPrinter" 빈을 가져와 모든 회원 정보를 출력하는 메소드를 호출.
+     *                 회원 목록을 출력하기 위해 MemberListPrinter를 사용.
+     */
+    private static void processListCommand() {
+        MemberListPrinter listPrinter = ctx.getBean("listPrinter", MemberListPrinter.class);
+        listPrinter.printAll();
+    }
+
+    /**
+     * method        : processInfoCommand
+     * date          : 24-11-17
+     * param         : String[] arg - 사용자 명령어 입력 배열
+     * description   : 사용자의 명령어를 처리하여 해당 이메일에 대한 회원 정보를 출력한다.
+     *                 입력된 인자 개수가 2개가 아닌 경우 도움말을 출력하고, infoPrinter 빈을 사용하여
+     *                 해당 이메일의 회원 정보를 출력한다.
+     */
+    private static void processInfoCommand(String[] arg) {
+        if (arg.length != 2) {
+            printHelp();
+            return;
+        }
+
+        MemberInfoPrinter infoPrinter = ctx.getBean("infoPrinter", MemberInfoPrinter.class);
+        infoPrinter.printMemberInfoPrinter(arg[1]);
+    }
 
 }
 
+/* test를 위한 데이터 메모
+
+ */

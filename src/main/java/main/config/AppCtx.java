@@ -3,9 +3,7 @@ package main.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import spring.ChangePasswordService;
-import spring.MemberDao;
-import spring.MemberRegisterService;
+import spring.*;
 
 
 /**
@@ -33,9 +31,9 @@ public class AppCtx {
      * description   : MemberRegisterService 빈을 생성하여 반환. 회원 등록 기능을 제공하며, MemberDao에 의존함.
      */
     @Bean
-    public MemberRegisterService memberRegisterService(){
+    public MemberRegisterService memberRegSvc(){
         // memberDao()가 생성한 객체를 MemberRegisterService 생성자를 통하여 주입한다.
-        return new MemberRegisterService(memberDao()) ;
+        return new MemberRegisterService(memberDao());
     }
 
     /**
@@ -52,6 +50,45 @@ public class AppCtx {
         pwdSvc.setMemberDao(memberDao());
         return pwdSvc ;
     }
+
+    /**
+     * method        : memberPrinter
+     * date          : 24-11-17
+     * description   : MemberPrinter는 회원 정보를 출력하는 역할을 수행한다.
+     */
+    @Bean
+    public MemberPrinter memberPrinter() {
+        return new MemberPrinter() ;
+    }
+
+    /**
+     * method        : listPrinter
+     * date          : 24-11-17
+     * description   : MemberListPrinter 객체를 생성하여 스프링 컨텍스트에 등록한다.
+     *                 MemberDao와 MemberPrinter를 주입하여 모든 회원 정보를 출력하는 기능을 제공한다.
+     */
+    @Bean
+    public MemberListPrinter listPrinter() {
+        return new MemberListPrinter(memberDao(), memberPrinter()) ;
+    }
+
+
+    /**
+     * method        : infoPrinter
+     * date          : 24-11-17
+     * param         : none
+     * return        : MemberInfoPrinter
+     * description   : MemberInfoPrinter 빈을 생성하고 MemberDao 및 MemberPrinter 객체를 설정하여 반환한다.
+     *                 의존성 주입을 통해 회원 정보를 조회하고 출력하는 기능을 제공한다.
+     */
+    @Bean
+    public MemberInfoPrinter infoPrinter() {
+        MemberInfoPrinter infoPrinter = new MemberInfoPrinter() ;
+        infoPrinter.setMemberDao(memberDao());
+        infoPrinter.setPrinter(memberPrinter());
+        return infoPrinter ;
+    }
+
 
 
 }
