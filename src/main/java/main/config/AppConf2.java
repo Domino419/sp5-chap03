@@ -1,28 +1,26 @@
 package main.config;
 
-
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
 import spring.*;
 
 
 /**
- * class         : AppCtx
- * date          : 24-11-17
- * description   : Spring 설정 클래스. 애플리케이션에서 필요한 Bean을 정의하고 관리.
+ * class        : AppConf2
+ * date         : 24-11-17
+ * description  : 스프링 애플리케이션 컨텍스트에 필요한 Bean을 정의하는 설정 클래스.
+ *                MemberDao와 MemberPrinter 빈을 등록하여 의존성 주입을 통해 사용 가능하게 설정.
+ *                [리스트 3.27] 8.두 개 이상의 설정 파일 사용하기
  */
-@Configuration
-public class AppCtx {
 
-    /**
-     * method        : memberDao
-     * date          : 24-11-17
-     * description   : MemberDao 빈을 생성하여 반환. 회원 데이터를 관리하는 DAO 객체.
-     */
-    @Bean
-    public MemberDao memberDao(){
-        return new MemberDao() ;
-    }
+@Configuration
+public class AppConf2 {
+    @Autowired
+    private MemberDao memberDao ;
+    @Autowired
+    private MemberPrinter memberPrinter ;
 
     /**
      * method        : memberRegisterService
@@ -32,8 +30,7 @@ public class AppCtx {
      */
     @Bean
     public MemberRegisterService memberRegSvc(){
-        // memberDao()가 생성한 객체를 MemberRegisterService 생성자를 통하여 주입한다.
-        return new MemberRegisterService(memberDao());
+        return new MemberRegisterService(memberDao);
     }
 
     /**
@@ -46,19 +43,8 @@ public class AppCtx {
     @Bean
     public ChangePasswordService changePwdSvc() {
         ChangePasswordService pwdSvc = new ChangePasswordService() ;
-        // 세터 ( setMemberDao()메서드 ) 를 이용해서 의존 객체를 주입한다.
-        pwdSvc.setMemberDao(memberDao());
+        pwdSvc.setMemberDao(memberDao);
         return pwdSvc ;
-    }
-
-    /**
-     * method        : memberPrinter
-     * date          : 24-11-17
-     * description   : MemberPrinter는 회원 정보를 출력하는 역할을 수행한다.
-     */
-    @Bean
-    public MemberPrinter memberPrinter() {
-        return new MemberPrinter() ;
     }
 
     /**
@@ -69,7 +55,7 @@ public class AppCtx {
      */
     @Bean
     public MemberListPrinter listPrinter() {
-        return new MemberListPrinter(memberDao(), memberPrinter()) ;
+        return new MemberListPrinter(memberDao, memberPrinter) ;
     }
 
 
@@ -84,8 +70,8 @@ public class AppCtx {
     @Bean
     public MemberInfoPrinter infoPrinter() {
         MemberInfoPrinter infoPrinter = new MemberInfoPrinter() ;
-        infoPrinter.setMemberDao(memberDao());
-        infoPrinter.setPrinter(memberPrinter());
+        infoPrinter.setMemberDao(memberDao);
+        infoPrinter.setPrinter(memberPrinter);
         return infoPrinter ;
     }
 
@@ -105,26 +91,4 @@ public class AppCtx {
         versionPrinter.setMinorVersion(0);
         return versionPrinter ;
     }
-
-
-
-
-
-
 }
-
-
-/*
-@Configuration 애노테이션은 스프링 설정 클래스를 의미한다.
-@Bean 애노테이션은 해당 메서드가 생성한 객체를 스프링 빈이라고 설정한다.
-      메서드마다 한개의 빈 객체를 생성하며, 이때 메서드 이름은 빈 객체의 이름으로 사용한다.
-      memberDao() 메서드를 이용해서 생성한 빈 객체는 "memberdao" 라는 이름으로 스프링에 등록된다.
-
-객체를 생성하고 의존 객체를 주입하는 것은 스프링 컨테이너이므로, 설정 클래스를 이용해어 컨테이너를 생성해야 한다.
- AnnotationConfigApplicationContext ctx =    new AnnotationConfigApplicationContext(AppCtx.class);
-
-컨테이너를 생성하면 getBean() 메서드를 이용해서 사용할 객체를 구할 수 있다.
-//컨테이너에[서 이름이 memberRegSvc인 빈 객체를 구하는 getBean() 메서드의 사용 예시
-MemberRegisterService regSvc = ctx.getBean("memberRegSvc",MemberRegisterService.class) ;
-
- */

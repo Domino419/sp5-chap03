@@ -1,6 +1,8 @@
 package main;
 
 import assembler.Assembler;
+import main.config.AppConf1;
+import main.config.AppConf2;
 import main.config.AppCtx;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -23,7 +25,8 @@ public class MainForSpring {
 
     public static void main(String[] args) throws IOException {
         //AnnotationConfigApplicationContext을 사용해서 설정파일(AppCtx.class)로부터 생성할 객체와 의존 주입 대상을 정한다.
-        ctx = new AnnotationConfigApplicationContext(AppCtx.class) ; // 추가
+       // ctx = new AnnotationConfigApplicationContext(AppCtx.class) ; // 추가
+        ctx = new AnnotationConfigApplicationContext(AppConf1.class, AppConf2.class) ; // AnnotationConfigApplicationContext의 인자는 가변 인자이므로 설정 클래스 목록을 콤마로 구분해서 추가하면 됨
 
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)) ;
 
@@ -52,6 +55,13 @@ public class MainForSpring {
                 processInfoCommand(command.split(" "));
                 continue;
             }
+
+            // 2024.11.19 cahp03 스프링 DI - 리스트3.25 소스 추가
+            else if (command.startsWith("version")) {
+                processVersionCommand();
+                continue;
+            }
+
 
             printHelp();
         }
@@ -140,6 +150,8 @@ public class MainForSpring {
         System.out.println("new 이메일 이름 암호 암호확인");
         System.out.println("change 이메일 현재비번 변경비번");
         System.out.println("info 이메일 ");   // 안내말 추가
+        System.out.println("list  ");        // 등롣된 고객 전체 조회
+        System.out.println("version  ");     // 프로그램 버전 확인
         System.out.println("----------------");
         System.out.println();
     }
@@ -173,8 +185,30 @@ public class MainForSpring {
         infoPrinter.printMemberInfoPrinter(arg[1]);
     }
 
+
+    /**
+     * method        : processVersionCommand
+     * date          : 24-11-17
+     * param         :
+     * return        : void
+     * description   : VersionPrinter Bean을 가져와 프로그램의 버전 정보를 출력하는 메소드.
+     *                 버전 정보는 VersionPrinter 객체를 통해 설정된 majorVersion과 minorVersion을 기준으로 출력된다.
+     */
+    private static void processVersionCommand() {
+        VersionPrinter versionPrinter = ctx.getBean("versionPrinter", VersionPrinter.class);
+        versionPrinter.print() ;
+    }
+
+
+
 }
 
 /* test를 위한 데이터 메모
+new 제인 제인 111 111
+new 로제 로제 222 222
+new 제니 제니 333 333
 
+change 제인 111 1111
+
+info 로제
  */
