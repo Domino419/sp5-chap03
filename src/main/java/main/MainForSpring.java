@@ -3,6 +3,7 @@ package main;
 import assembler.Assembler;
 import main.config.AppConf1;
 import main.config.AppConf2;
+import main.config.AppConfImport;
 import main.config.AppCtx;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -25,9 +26,9 @@ public class MainForSpring {
 
     public static void main(String[] args) throws IOException {
         //AnnotationConfigApplicationContext을 사용해서 설정파일(AppCtx.class)로부터 생성할 객체와 의존 주입 대상을 정한다.
-       // ctx = new AnnotationConfigApplicationContext(AppCtx.class) ; // 추가
-        ctx = new AnnotationConfigApplicationContext(AppConf1.class, AppConf2.class) ; // AnnotationConfigApplicationContext의 인자는 가변 인자이므로 설정 클래스 목록을 콤마로 구분해서 추가하면 됨
-
+        ctx = new AnnotationConfigApplicationContext(AppConfImport.class) ; // 24.11.20 수정
+        // ctx = new AnnotationConfigApplicationContext(AppCtx.class) ; // 추가
+        // ctx = new AnnotationConfigApplicationContext(AppConf1.class, AppConf2.class) ; // 수정
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in)) ;
 
         while (true) {
